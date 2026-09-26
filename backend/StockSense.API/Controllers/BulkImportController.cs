@@ -11,6 +11,11 @@ using StockSense.Application.Interfaces;
 
 namespace StockSense.API.Controllers
 {
+    public class FileUploadDto
+    {
+        public IFormFile File { get; set; } = null!;
+    }
+
     [ApiController]
     [Route("api/import")]
     public class BulkImportController : ControllerBase
@@ -26,8 +31,10 @@ namespace StockSense.API.Controllers
 
         [HttpPost("products")]
         [Authorize(Roles = "Admin,InventoryManager")]
-        public async Task<ActionResult<ApiResponse<BulkImportResultDto>>> ImportProducts([FromForm] IFormFile file)
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<ApiResponse<BulkImportResultDto>>> ImportProducts([FromForm] FileUploadDto dto)
         {
+            var file = dto?.File;
             if (file == null || file.Length == 0)
             {
                 return BadRequest(ApiResponse<BulkImportResultDto>.Fail("No file was uploaded."));
@@ -59,8 +66,10 @@ namespace StockSense.API.Controllers
 
         [HttpPost("opening-stock")]
         [Authorize(Roles = "Admin,InventoryManager")]
-        public async Task<ActionResult<ApiResponse<BulkImportResultDto>>> ImportOpeningStock([FromForm] IFormFile file)
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<ApiResponse<BulkImportResultDto>>> ImportOpeningStock([FromForm] FileUploadDto dto)
         {
+            var file = dto?.File;
             if (file == null || file.Length == 0)
             {
                 return BadRequest(ApiResponse<BulkImportResultDto>.Fail("No file was uploaded."));
