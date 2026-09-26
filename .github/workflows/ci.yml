@@ -29,10 +29,10 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore NuGet Packages
-        run: dotnet restore backend/StockSense.API/StockSense.API.csproj
+        run: dotnet restore backend/StockSense.sln
 
       - name: Build Backend (Release)
-        run: dotnet build backend/StockSense.API/StockSense.API.csproj --configuration Release --no-restore
+        run: dotnet build backend/StockSense.sln --configuration Release --no-restore
 
   # ============================================================================
   # 2. Frontend CI (React 18 + Vite + TypeScript)
