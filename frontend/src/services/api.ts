@@ -97,3 +97,21 @@ export const changePassword = (data: object) => api.put('/profile/password', dat
 export const changeUserRole = (id: number, role: number) => api.put(`/users/${id}/role`, { role });
 export const toggleUserStatus = (id: number, isActive: boolean) => api.put(`/users/${id}/status`, { isActive });
 export const deleteUser = (id: number) => api.delete(`/users/${id}`);
+
+// Bulk Import
+export const importProductsFile = (formData: FormData) =>
+  api.post('/import/products', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+
+export const importOpeningStockFile = (formData: FormData) =>
+  api.post('/import/opening-stock', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+
+export const downloadProductTemplate = () =>
+  api.get('/import/templates/products', { responseType: 'blob' });
+
+export const downloadOpeningStockTemplate = () =>
+  api.get('/import/templates/opening-stock', { responseType: 'blob' });
+
+export const SIGNALR_HUB_URL = import.meta.env.VITE_API_URL 
+  ? `${import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')}/hubs/stock`
+  : 'http://localhost:5000/hubs/stock';
+

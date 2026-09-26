@@ -124,19 +124,25 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.SetIsOriginAllowed(_ => true)
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
-// Commit 3 Services
+// Commit 3 Services & Phase 2 Real-Time / Bulk Import
 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IEnhancedSupplierService, EnhancedSupplierService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+builder.Services.AddScoped<IBulkImportService, BulkImportService>();
+
+// SignalR & Real-Time Notifier
+builder.Services.AddSignalR();
+builder.Services.AddScoped<IStockRealTimeNotifier, StockSense.API.Services.SignalRStockNotifier>();
 
 var app = builder.Build();
 
@@ -173,5 +179,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<StockSense.API.Hubs.StockHub>("/hubs/stock");
 
 app.Run();

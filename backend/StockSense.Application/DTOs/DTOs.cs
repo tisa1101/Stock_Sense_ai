@@ -236,4 +236,14 @@ namespace StockSense.Application.DTOs
     public record ChangePasswordDto(string CurrentPassword, string NewPassword, string ConfirmPassword);
     public record ChangeRoleDto(UserRole Role);
     public record ToggleUserStatusDto(bool IsActive);
+
+    // Bulk Import DTOs
+    public record BulkImportRowErrorDto(int RowNumber, string SKU, string Field, string ErrorMessage);
+    public record BulkImportResultDto(
+        int TotalRows,
+        int SuccessCount,
+        int FailedCount,
+        List<string> ImportedItems,
+        List<BulkImportRowErrorDto> Errors
+    );
 }

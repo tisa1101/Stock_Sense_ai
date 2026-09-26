@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { Warehouse, Product, InventoryItem } from '../types';
-import { ArrowLeft, Save, CheckCircle, Plus, Trash2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Save, CheckCircle, Plus, Trash2, AlertCircle, ScanLine } from 'lucide-react';
+import { BarcodeScannerModal } from '../components/BarcodeScannerModal';
 
 interface DeliveryLine {
   productId: number;
@@ -17,6 +18,8 @@ export const CreateDeliveryPage: React.FC = () => {
 
   const [warehouseId, setWarehouseId] = useState<number | ''>('');
   const [lines, setLines] = useState<DeliveryLine[]>([{ productId: 0, quantity: 5 }]);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [scanActiveIndex, setScanActiveIndex] = useState<number | null>(null);
 
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -34,6 +37,32 @@ export const CreateDeliveryPage: React.FC = () => {
       if (pRes.data.data.length > 0) setLines([{ productId: pRes.data.data[0].id, quantity: 5 }]);
     });
   }, []);
+
+  const handleBarcodeScan = (scannedCode: string) => {
+    const code = scannedCode.trim().toLowerCase();
+    const matched = products.find(
+      (p) => p.sku.toLowerCase() === code || p.name.toLowerCase().includes(code) || p.id.toString() === code
+    );
+
+    if (matched) {
+      if (scanActiveIndex !== null && scanActiveIndex < lines.length) {
+        updateLine(scanActiveIndex, 'productId', matched.id);
+      } else {
+        const existingIdx = lines.findIndex((l) => l.productId === matched.id);
+        if (existingIdx >= 0) {
+          updateLine(existingIdx, 'quantity', lines[existingIdx].quantity + 1);
+        } else if (lines.length === 1 && lines[0].productId === 0) {
+          setLines([{ productId: matched.id, quantity: 5 }]);
+        } else {
+          setLines([...lines, { productId: matched.id, quantity: 5 }]);
+        }
+      }
+      setError(null);
+    } else {
+      setError(`Scanned code "${scannedCode}" did not match any registered product SKU.`);
+    }
+    setScanActiveIndex(null);
+  };
 
   const getAvailableStock = (prodId: number, whId: number | '') => {
     if (!whId || !prodId) return 0;
@@ -132,14 +161,27 @@ export const CreateDeliveryPage: React.FC = () => {
         <div className="space-y-3">
           <div className="flex items-center justify-between border-b border-slate-200 pb-2">
             <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Outbound Items ({lines.length})</h3>
-            <button
-              type="button"
-              onClick={addLine}
-              className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded flex items-center gap-1"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Add Item</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setScanActiveIndex(null);
+                  setIsScannerOpen(true);
+                }}
+                className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-xs rounded-lg flex items-center gap-1.5 transition-colors border border-purple-200"
+              >
+                <ScanLine className="w-3.5 h-3.5" />
+                <span>Scan Barcode / QR</span>
+              </button>
+              <button
+                type="button"
+                onClick={addLine}
+                className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg flex items-center gap-1"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Item</span>
+              </button>
+            </div>
           </div>
 
           {lines.map((line, idx) => {
@@ -215,6 +257,17 @@ export const CreateDeliveryPage: React.FC = () => {
           </button>
         </div>
       </div>
+
+      <BarcodeScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => {
+          setIsScannerOpen(false);
+          setScanActiveIndex(null);
+        }}
+        onScan={handleBarcodeScan}
+        title="Scan Outbound Item Barcode / QR"
+        description="Verify and pick inventory items accurately using the barcode camera scanner."
+      />
     </div>
   );
 };

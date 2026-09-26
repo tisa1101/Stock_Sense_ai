@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.2.10",
+    "@microsoft/signalr": "^10.0.11",
     "axios": "^1.20.0",
     "framer-motion": "^13.4.4",
+    "html5-qrcode": "^2.3.8",
     "lucide-react": "^1.48.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

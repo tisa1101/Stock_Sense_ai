@@ -13,7 +13,13 @@ namespace StockSense.Application.Services
     public class NotificationService : INotificationService
     {
         private readonly IApplicationDbContext _db;
-        public NotificationService(IApplicationDbContext db) => _db = db;
+        private readonly IStockRealTimeNotifier? _realTimeNotifier;
+
+        public NotificationService(IApplicationDbContext db, IStockRealTimeNotifier? realTimeNotifier = null)
+        {
+            _db = db;
+            _realTimeNotifier = realTimeNotifier;
+        }
 
         public async Task CreateAsync(int userId, string title, string message, NotificationType type, NotificationPriority priority, string? relatedEntityType = null, int? relatedEntityId = null)
         {
@@ -26,6 +32,11 @@ namespace StockSense.Application.Services
             };
             _db.Notifications.Add(notification);
             await _db.SaveChangesAsync();
+
+            if (_realTimeNotifier != null)
+            {
+                await _realTimeNotifier.NotifyNewNotificationAsync(title, message, type.ToString(), priority.ToString());
+            }
         }
 
         public async Task CreateForUsersAsync(IEnumerable<int> userIds, string title, string message, NotificationType type, NotificationPriority priority, string? relatedEntityType = null, int? relatedEntityId = null)
@@ -39,6 +50,11 @@ namespace StockSense.Application.Services
             }).ToList();
             _db.Notifications.AddRange(notifications);
             await _db.SaveChangesAsync();
+
+            if (_realTimeNotifier != null)
+            {
+                await _realTimeNotifier.NotifyNewNotificationAsync(title, message, type.ToString(), priority.ToString());
+            }
         }
 
         public async Task<NotificationListDto> GetUserNotificationsAsync(int userId, int page = 1, int pageSize = 20)

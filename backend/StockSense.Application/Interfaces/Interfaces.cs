@@ -184,4 +184,19 @@ namespace StockSense.Application.Interfaces
         Task<UserDto> UpdateProfileAsync(int userId, UpdateProfileDto dto);
         Task ChangePasswordAsync(int userId, ChangePasswordDto dto);
     }
+
+    public interface IStockRealTimeNotifier
+    {
+        Task NotifyStockChangedAsync(int productId, string productName, int warehouseId, int newQuantity, string transactionType);
+        Task NotifyLowStockAlertAsync(int productId, string productName, int currentQuantity, int reorderLevel);
+        Task NotifyNewNotificationAsync(string title, string message, string type, string priority);
+    }
+
+    public interface IBulkImportService
+    {
+        Task<BulkImportResultDto> ImportProductsAsync(Stream fileStream, string fileName, int userId);
+        Task<BulkImportResultDto> ImportOpeningStockAsync(Stream fileStream, string fileName, int userId);
+        byte[] GetProductTemplateCsv();
+        byte[] GetOpeningStockTemplateCsv();
+    }
 }

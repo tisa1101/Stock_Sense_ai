@@ -4,7 +4,8 @@ import api from '../services/api';
 import { Product, Category, Warehouse } from '../types';
 import { StatusBadge } from '../components/StatusBadge';
 import { LoadingSpinner, EmptyState } from '../components/CommonState';
-import { Plus, Search, Filter, Trash2, Eye, Edit, Package } from 'lucide-react';
+import { Plus, Search, Filter, Trash2, Eye, Edit, Package, FileSpreadsheet } from 'lucide-react';
+import { BulkImportModal } from '../components/BulkImportModal';
 
 export const ProductsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export const ProductsPage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isImportOpen, setIsImportOpen] = useState(false);
 
   // Filters
   const [search, setSearch] = useState('');
@@ -69,13 +71,22 @@ export const ProductsPage: React.FC = () => {
           <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Products Catalog</h1>
           <p className="text-xs text-slate-500">Manage SKUs, categories, reorder levels, and stock status</p>
         </div>
-        <button
-          onClick={() => navigate('/products/new')}
-          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-lg shadow-xs transition-colors flex items-center gap-2 self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Product</span>
-        </button>
+        <div className="flex items-center gap-2.5 self-start sm:self-auto">
+          <button
+            onClick={() => setIsImportOpen(true)}
+            className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs rounded-lg border border-slate-300 dark:border-slate-700 transition-colors flex items-center gap-2"
+          >
+            <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <span>Import CSV / Excel</span>
+          </button>
+          <button
+            onClick={() => navigate('/products/new')}
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-lg shadow-xs transition-colors flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add Product</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter Toolbar */}
@@ -190,6 +201,13 @@ export const ProductsPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      <BulkImportModal
+        isOpen={isImportOpen}
+        onClose={() => setIsImportOpen(false)}
+        onSuccess={() => fetchData()}
+        type="products"
+      />
     </div>
   );
 };

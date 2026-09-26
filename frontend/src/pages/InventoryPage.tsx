@@ -3,13 +3,15 @@ import api from '../services/api';
 import { InventoryItem, Category, Warehouse } from '../types';
 import { StatusBadge } from '../components/StatusBadge';
 import { LoadingSpinner, EmptyState } from '../components/CommonState';
-import { Search, Filter, Boxes } from 'lucide-react';
+import { Search, Filter, Boxes, FileSpreadsheet } from 'lucide-react';
+import { BulkImportModal } from '../components/BulkImportModal';
 
 export const InventoryPage: React.FC = () => {
   const [inventories, setInventories] = useState<InventoryItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isImportOpen, setIsImportOpen] = useState(false);
 
   // Filters
   const [search, setSearch] = useState('');
@@ -54,9 +56,18 @@ export const InventoryPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Stock Overview Matrix</h1>
-        <p className="text-xs text-slate-500">Real-time stock quantities across products and warehouses</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Stock Overview Matrix</h1>
+          <p className="text-xs text-slate-500">Real-time stock quantities across products and warehouses</p>
+        </div>
+        <button
+          onClick={() => setIsImportOpen(true)}
+          className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs rounded-lg border border-slate-300 dark:border-slate-700 transition-colors flex items-center gap-2 self-start sm:self-auto"
+        >
+          <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          <span>Import Opening Stock</span>
+        </button>
       </div>
 
       {/* Filter Toolbar */}
@@ -141,6 +152,13 @@ export const InventoryPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      <BulkImportModal
+        isOpen={isImportOpen}
+        onClose={() => setIsImportOpen(false)}
+        onSuccess={() => fetchInventory()}
+        type="opening-stock"
+      />
     </div>
   );
 };
