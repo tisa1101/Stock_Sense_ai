@@ -1,14 +1,15 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Layers, Menu, X, ChevronRight, Sparkles } from 'lucide-react';
+import { Layers, Menu, X, ChevronRight, Calculator } from 'lucide-react';
 
 const navLinks = [
-  { label: 'Features', href: '#features' },
-  { label: 'How It Works', href: '#how-it-works' },
+  { label: 'Solutions', href: '#solutions' },
+  { label: 'ROI Calculator', href: '#roi-calculator' },
+  { label: 'Industries', href: '#industries' },
   { label: 'AI Copilot', href: '#ai-copilot' },
   { label: 'Supply Chain', href: '#supply-chain' },
-  { label: 'Analytics', href: '#analytics' },
+  { label: 'Integrations', href: '#integrations' },
   { label: 'Pricing', href: '#pricing' },
 ];
 
@@ -69,12 +70,12 @@ export const LandingNavbar: React.FC = () => {
             </motion.div>
 
             {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-1 bg-white/[0.03] border border-white/[0.06] rounded-full px-3 py-1.5 backdrop-blur-md">
+            <div className="hidden xl:flex items-center gap-1 bg-white/[0.03] border border-white/[0.06] rounded-full px-3 py-1.5 backdrop-blur-md">
               {navLinks.map((link) => (
                 <motion.button
                   key={link.href}
                   onClick={() => handleNavClick(link.href)}
-                  className={`relative px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-colors ${
+                  className={`relative px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-colors ${
                     activeLink === link.href
                       ? 'text-white'
                       : 'text-slate-400 hover:text-slate-200'
@@ -118,7 +119,7 @@ export const LandingNavbar: React.FC = () => {
             {/* Mobile menu button */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden p-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-slate-300 hover:text-white"
+              className="xl:hidden p-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-slate-300 hover:text-white"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -133,7 +134,7 @@ export const LandingNavbar: React.FC = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-0 z-40 bg-[#030712]/98 backdrop-blur-2xl flex flex-col justify-between pt-24 pb-8 px-6 lg:hidden"
+            className="fixed inset-0 z-40 bg-[#030712]/98 backdrop-blur-2xl flex flex-col justify-between pt-24 pb-8 px-6 xl:hidden"
           >
             <div className="flex flex-col gap-1">
               {navLinks.map((link, i) => (
@@ -143,7 +144,7 @@ export const LandingNavbar: React.FC = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
                   onClick={() => handleNavClick(link.href)}
-                  className="text-left py-4 text-lg font-bold text-slate-300 hover:text-white border-b border-white/[0.06] flex items-center justify-between"
+                  className="text-left py-3.5 text-base font-bold text-slate-300 hover:text-white border-b border-white/[0.06] flex items-center justify-between"
                 >
                   <span>{link.label}</span>
                   <ChevronRight className="w-4 h-4 text-slate-600" />
