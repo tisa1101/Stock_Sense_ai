@@ -88,29 +88,7 @@ namespace StockSense.API.Controllers
         }
     }
 
-    [ApiController]
-    [Route("api/[controller]")]
-    [Authorize]
-    public class SuppliersController : ControllerBase
-    {
-        private readonly ISupplierService _supplierService;
-        public SuppliersController(ISupplierService supplierService) => _supplierService = supplierService;
 
-        [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<SupplierDto>>>> GetAll()
-        {
-            var data = await _supplierService.GetAllAsync();
-            return Ok(ApiResponse<List<SupplierDto>>.Ok(data));
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Admin,InventoryManager")]
-        public async Task<ActionResult<ApiResponse<SupplierDto>>> Create([FromBody] CreateSupplierDto dto)
-        {
-            var data = await _supplierService.CreateAsync(dto);
-            return Ok(ApiResponse<SupplierDto>.Ok(data, "Supplier created successfully."));
-        }
-    }
 
     [ApiController]
     [Route("api/[controller]")]
