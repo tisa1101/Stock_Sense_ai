@@ -15,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // 1. Configure Connection String & DbContext
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? builder.Configuration["DATABASE_URL"]
     ?? "Server=(localdb)\\mssqllocaldb;Database=StockSenseDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -40,14 +41,21 @@ builder.Services.AddScoped<IStockLedgerService, StockLedgerService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 // AI Service (HTTP proxy to Python AI microservice)
+var aiServiceUrl = builder.Configuration["AiService:BaseUrl"] 
+    ?? builder.Configuration["AI_SERVICE_URL"] 
+    ?? "http://localhost:8000";
+
 builder.Services.AddHttpClient("AiService", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["AiService:BaseUrl"] ?? "http://localhost:8000");
+    client.BaseAddress = new Uri(aiServiceUrl);
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 builder.Services.AddScoped<IAiService, AiService>();
+
 // 3. Configure JWT Authentication
-var secretKey = builder.Configuration["Jwt:Key"] ?? "StockSense_Super_Secret_JWT_Key_2026_Hackathon_Production_Grade_Secret!";
+var secretKey = builder.Configuration["Jwt:Key"] 
+    ?? builder.Configuration["JWT_SECRET"] 
+    ?? "StockSense_Super_Secret_JWT_Key_2026_Hackathon_Production_Grade_Secret!";
 var issuer = builder.Configuration["Jwt:Issuer"] ?? "StockSenseAPI";
 var audience = builder.Configuration["Jwt:Audience"] ?? "StockSenseClient";
 

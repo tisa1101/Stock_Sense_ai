@@ -1,0 +1,126 @@
+name: StockSense CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ============================================================================
+  # 1. Backend CI (.NET 8 Web API)
+  # ============================================================================
+  backend-ci:
+    name: Backend Build & Validation (.NET 8)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore NuGet Packages
+        run: dotnet restore backend/StockSense.API/StockSense.API.csproj
+
+      - name: Build Backend (Release)
+        run: dotnet build backend/StockSense.API/StockSense.API.csproj --configuration Release --no-restore
+
+  # ============================================================================
+  # 2. Frontend CI (React 18 + Vite + TypeScript)
+  # ============================================================================
+  frontend-ci:
+    name: Frontend Lint & Build (React/TypeScript)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Linter
+        run: npm run lint
+
+      - name: Build Production Bundle
+        run: npm run build
+        env:
+          VITE_API_URL: /api
+
+  # ============================================================================
+  # 3. AI Service CI (Python 3.11 + FastAPI)
+  # ============================================================================
+  ai-service-ci:
+    name: AI Service Validation (Python 3.11)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: ai-service/requirements.txt
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ai-service/requirements.txt
+          pip install flake8
+
+      - name: Compile and Syntax Check
+        run: python -m compileall ai-service/
+
+      - name: Lint with Flake8 (Syntax and Fatal Errors)
+        run: flake8 ai-service/ --count --select=E9,F63,F7,F82 --show-source --statistics
+
+  # ============================================================================
+  # 4. Container Build Validation (Docker Compose)
+  # ============================================================================
+  docker-validation:
+    name: Docker Container Build Check
+    runs-on: ubuntu-latest
+    needs: [backend-ci, frontend-ci, ai-service-ci]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: actions/setup-buildx-action@v3
+
+      - name: Validate Docker Compose Configuration
+        run: docker compose config
+        env:
+          MSSQL_SA_PASSWORD: TestPassword123!
+          JWT_SECRET: TestJwtSecretKey12345678901234567890!
+          GEMINI_API_KEY: dummy_key
+
+      - name: Build Docker Containers
+        run: docker compose build
+        env:
+          MSSQL_SA_PASSWORD: TestPassword123!
+          JWT_SECRET: TestJwtSecretKey12345678901234567890!
+          GEMINI_API_KEY: dummy_key
