@@ -91,7 +91,36 @@ On initial startup, the database is automatically seeded with demo accounts:
 
 ---
 
-## 5. Database Setup & EF Core Migrations
+## 5. Quickstart with Docker Compose 🐳
+
+You can spin up the entire StockSense multi-tier stack (**React Frontend + Nginx**, **.NET 8 Backend API**, **FastAPI AI Microservice**, and **MS SQL Server 2022**) with a single command:
+
+```bash
+# 1. Copy environment template and add your Gemini API key (optional for copilot)
+cp .env.example .env
+
+# 2. Build and start all services in detached mode
+docker compose up -d --build
+```
+
+### 🌐 Service Endpoints
+
+| Service | Container Name | URL / Port | Description |
+| :--- | :--- | :--- | :--- |
+| **Frontend UI** | `stocksense-frontend` | `http://localhost:5173` or `http://localhost:80` | React 18 SPA + Nginx reverse proxy |
+| **Backend API** | `stocksense-backend` | `http://localhost:5000/api` | .NET 8 Web API Gateway & Business Engine |
+| **Swagger UI** | `stocksense-backend` | `http://localhost:5000/swagger` | Interactive OpenAPI documentation |
+| **AI Microservice** | `stocksense-ai-service` | `http://localhost:8000` | Python FastAPI (Forecasting, Anomalies, Copilot) |
+| **Database** | `stocksense-sqlserver` | `localhost:1433` | Microsoft SQL Server 2022 |
+
+To stop and remove containers:
+```bash
+docker compose down
+```
+
+---
+
+## 6. Database Setup & EF Core Migrations (Local Mode)
 
 1. Ensure SQL Server or SQL Server LocalDB (`(localdb)\mssqllocaldb`) is available on your machine.
 2. The connection string is preconfigured in `backend/StockSense.API/appsettings.json` or environment variables:

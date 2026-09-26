@@ -5,15 +5,44 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "DRIVER={ODBC Driver 17 for SQL Server};SERVER=(localdb)\\mssqllocaldb;DATABASE=StockSenseDb;Trusted_Connection=yes")
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "DRIVER={ODBC Driver 18 for SQL Server};SERVER=sqlserver,1433;DATABASE=StockSenseDb;UID=sa;PWD=YourStrong@Passw0rd!;TrustServerCertificate=yes"
+)
 
 def get_connection():
-    try:
-        conn = pyodbc.connect(DATABASE_URL)
-        return conn
-    except Exception as e:
-        print(f"Error connecting to database: {e}")
-        return None
+    db_url = os.getenv("DATABASE_URL")
+    if db_url:
+        try:
+            return pyodbc.connect(db_url)
+        except Exception as e:
+            # If specified driver failed, try swapping between Driver 18 and 17
+            if "ODBC Driver 18" in db_url:
+                try:
+                    return pyodbc.connect(db_url.replace("ODBC Driver 18", "ODBC Driver 17"))
+                except Exception:
+                    pass
+            elif "ODBC Driver 17" in db_url:
+                try:
+                    return pyodbc.connect(db_url.replace("ODBC Driver 17", "ODBC Driver 18"))
+                except Exception:
+                    pass
+
+    # Fallback to local / environment connection strings
+    for driver in ["ODBC Driver 18 for SQL Server", "ODBC Driver 17 for SQL Server", "SQL Server"]:
+        for host in ["sqlserver,1433", "(localdb)\\mssqllocaldb", "localhost,1433"]:
+            try:
+                conn_str = f"DRIVER={{{driver}}};SERVER={host};DATABASE=StockSenseDb;UID=sa;PWD=YourStrong@Passw0rd!;TrustServerCertificate=yes;"
+                return pyodbc.connect(conn_str, timeout=3)
+            except Exception:
+                pass
+            try:
+                conn_str = f"DRIVER={{{driver}}};SERVER={host};DATABASE=StockSenseDb;Trusted_Connection=yes;TrustServerCertificate=yes;"
+                return pyodbc.connect(conn_str, timeout=3)
+            except Exception:
+                pass
+
+    return None
 
 def get_ledger_for_product(product_id: int, days: int = 90):
     conn = get_connection()

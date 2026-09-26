@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  # 1. Database: Microsoft SQL Server 2022
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: stocksense-sqlserver
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD:-YourStrong@Passw0rd!}
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$MSSQL_SA_PASSWORD\" -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    networks:
+      - stocksense-network
+
+  # 2. Backend: .NET 8 Web API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: stocksense-backend
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=StockSenseDb;User Id=sa;Password=${MSSQL_SA_PASSWORD:-YourStrong@Passw0rd!};TrustServerCertificate=True;MultipleActiveResultSets=true;
+      - AiService__BaseUrl=http://ai-service:8000
+      - Jwt__Key=${JWT_SECRET:-StockSense_Super_Secret_JWT_Key_2026_Hackathon_Production_Grade_Secret!}
+      - Jwt__Issuer=StockSenseAPI
+      - Jwt__Audience=StockSenseClient
+    ports:
+      - "5000:5000"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - stocksense-network
+
+  # 3. AI Intelligence Microservice: Python FastAPI
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: stocksense-ai-service
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=DRIVER={ODBC Driver 18 for SQL Server};SERVER=sqlserver,1433;DATABASE=StockSenseDb;UID=sa;PWD=${MSSQL_SA_PASSWORD:-YourStrong@Passw0rd!};TrustServerCertificate=yes;
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    ports:
+      - "8000:8000"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - stocksense-network
+
+  # 4. Frontend UI: React 18 SPA + Nginx Reverse Proxy
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=/api
+    container_name: stocksense-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "5173:80"
+    depends_on:
+      - backend
+      - ai-service
+    networks:
+      - stocksense-network
+
+networks:
+  stocksense-network:
+    driver: bridge
+
+volumes:
+  sqlserver-data:
+    driver: local
