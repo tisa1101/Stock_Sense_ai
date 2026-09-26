@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi;
+using QuestPDF.Infrastructure;
 using StockSense.API.Middleware;
 using StockSense.Application.Interfaces;
 using StockSense.Application.Services;
@@ -120,6 +121,14 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+// Commit 3 Services
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IEnhancedSupplierService, EnhancedSupplierService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 
 var app = builder.Build();
 

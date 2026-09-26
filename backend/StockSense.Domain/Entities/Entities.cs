@@ -71,6 +71,25 @@ namespace StockSense.Domain.Entities
         public string Email { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
+        public int Rating { get; set; } = 3;
+        public bool IsActive { get; set; } = true;
+        public string? Notes { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    }
+
+    public class Notification
+    {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public User? User { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Message { get; set; } = string.Empty;
+        public NotificationType Type { get; set; }
+        public NotificationPriority Priority { get; set; }
+        public bool IsRead { get; set; } = false;
+        public string? RelatedEntityType { get; set; }
+        public int? RelatedEntityId { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 
     public class Receipt

@@ -193,4 +193,47 @@ namespace StockSense.Application.DTOs
     public record CopilotMessageDto(string Role, string Content);
     public record CopilotRequestDto(string Message, List<CopilotMessageDto>? History);
     public record CopilotResponseDto(string Reply, DateTime Timestamp);
+
+    // ===== COMMIT 3 DTOs =====
+
+    // Notification DTOs
+    public record NotificationDto(
+        int Id, int UserId, string Title, string Message,
+        NotificationType Type, NotificationPriority Priority,
+        bool IsRead, string? RelatedEntityType, int? RelatedEntityId, DateTime CreatedAt
+    );
+    public record NotificationListDto(List<NotificationDto> Items, int TotalCount, int UnreadCount);
+
+    // Enhanced Supplier DTOs
+    public record SupplierDetailDto(
+        int Id, string Name, string ContactPerson, string Email, string Phone,
+        string Address, int Rating, bool IsActive, string? Notes,
+        DateTime UpdatedAt, int TotalReceipts, int TotalQuantitySupplied,
+        List<ReceiptDto> RecentReceipts
+    );
+    public record UpdateSupplierDto(string Name, string ContactPerson, string Email, string Phone, string Address, int Rating, bool IsActive, string? Notes);
+    public record TopSupplierDto(int SupplierId, string SupplierName, int TotalReceipts, int TotalQuantitySupplied, int Rating, string LastReceiptDate);
+    public record SupplierStatsDto(int TotalSuppliers, int ActiveSuppliers, int TotalReceiptsThisMonth, List<TopSupplierDto> TopSuppliers);
+
+    // Analytics DTOs
+    public record CategoryBreakdownDto(string CategoryName, int ProductCount, int TotalStock, double Percentage);
+    public record WarehouseComparisonDto(string WarehouseName, string WarehouseCode, int TotalProducts, int TotalStock, int LowStockCount, double UtilizationPercentage);
+    public record MovementTrendDto(string Date, int Receipts, int Deliveries, int TransfersIn, int TransfersOut, int Adjustments, int NetChange);
+    public record TopProductMovementDto(int ProductId, string ProductName, string SKU, int TotalMovements, int TotalQuantityMoved, double AverageMovementSize);
+    public record StockOverTimeDto(string Date, int TotalStock);
+    public record OperationSummaryDto(string OperationType, int Draft, int Waiting, int Ready, int Done, int Canceled, int Total);
+
+    // Report DTOs
+    public record ReportFilterDto(
+        int? WarehouseId, int? CategoryId, int? ProductId,
+        string? Status, DateTime? StartDate, DateTime? EndDate,
+        int? Month, int? Year
+    );
+
+    // User Management DTOs
+    public record UserListDto(int Id, string Name, string Email, UserRole Role, bool IsActive, DateTime CreatedAt);
+    public record UpdateProfileDto(string Name, string Email);
+    public record ChangePasswordDto(string CurrentPassword, string NewPassword, string ConfirmPassword);
+    public record ChangeRoleDto(UserRole Role);
+    public record ToggleUserStatusDto(bool IsActive);
 }

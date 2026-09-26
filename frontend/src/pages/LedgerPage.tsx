@@ -58,7 +58,7 @@ export const LedgerPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+        <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
           <History className="w-5 h-5 text-amber-500" />
           <span>Stock Ledger Audit Trail</span>
         </h1>
@@ -66,7 +66,7 @@ export const LedgerPage: React.FC = () => {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-wrap items-center gap-3">
+      <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
           <input
@@ -128,7 +128,7 @@ export const LedgerPage: React.FC = () => {
           description="No inventory transaction history matches your search filters."
         />
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
@@ -150,7 +150,7 @@ export const LedgerPage: React.FC = () => {
                     <td className="p-3.5 text-slate-500 whitespace-nowrap">
                       {new Date(l.createdAt).toLocaleDateString()} {new Date(l.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </td>
-                    <td className="p-3.5 font-bold text-slate-900">
+                    <td className="p-3.5 font-bold text-slate-900 dark:text-white">
                       <div>{l.productName}</div>
                       <div className="text-[10px] font-mono text-slate-400">{l.sku}</div>
                     </td>
@@ -163,7 +163,7 @@ export const LedgerPage: React.FC = () => {
                     <td className={`p-3.5 font-extrabold ${l.quantityChange >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
                       {l.quantityChange > 0 ? `+${l.quantityChange}` : l.quantityChange}
                     </td>
-                    <td className="p-3.5 font-extrabold text-slate-900">{l.quantityAfter}</td>
+                    <td className="p-3.5 font-extrabold text-slate-900 dark:text-white">{l.quantityAfter}</td>
                     <td className="p-3.5 text-slate-500 font-medium">{l.createdBy}</td>
                   </tr>
                 ))}

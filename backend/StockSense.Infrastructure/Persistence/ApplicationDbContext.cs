@@ -23,6 +23,7 @@ namespace StockSense.Infrastructure.Persistence
         public DbSet<StockAdjustment> StockAdjustments => Set<StockAdjustment>();
         public DbSet<StockAdjustmentItem> StockAdjustmentItems => Set<StockAdjustmentItem>();
         public DbSet<StockLedger> StockLedgers => Set<StockLedger>();
+        public DbSet<Notification> Notifications => Set<Notification>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -117,6 +118,19 @@ namespace StockSense.Infrastructure.Persistence
                 .WithMany()
                 .HasForeignKey(l => l.WarehouseId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Notification
+            modelBuilder.Entity<Notification>()
+                .HasOne(n => n.User)
+                .WithMany()
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Notification>()
+                .HasIndex(n => n.UserId);
+
+            modelBuilder.Entity<Notification>()
+                .HasIndex(n => n.CreatedAt);
         }
     }
 }

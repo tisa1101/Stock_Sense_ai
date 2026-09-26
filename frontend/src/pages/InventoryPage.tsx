@@ -55,12 +55,12 @@ export const InventoryPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-slate-900 tracking-tight">Stock Overview Matrix</h1>
+        <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Stock Overview Matrix</h1>
         <p className="text-xs text-slate-500">Real-time stock quantities across products and warehouses</p>
       </div>
 
       {/* Filter Toolbar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-wrap items-center gap-3">
+      <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
           <input
@@ -106,7 +106,7 @@ export const InventoryPage: React.FC = () => {
           description="No inventory records match your criteria."
         />
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
@@ -124,10 +124,10 @@ export const InventoryPage: React.FC = () => {
               <tbody className="divide-y divide-slate-100">
                 {filtered.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="p-3.5 font-bold text-slate-900">{item.productName}</td>
+                    <td className="p-3.5 font-bold text-slate-900 dark:text-white">{item.productName}</td>
                     <td className="p-3.5 font-mono text-slate-600 font-semibold">{item.sku}</td>
                     <td className="p-3.5 text-slate-600 font-medium">{item.warehouseName}</td>
-                    <td className="p-3.5 font-extrabold text-slate-900">{item.quantity}</td>
+                    <td className="p-3.5 font-extrabold text-slate-900 dark:text-white">{item.quantity}</td>
                     <td className="p-3.5 text-slate-500">{item.reservedQuantity}</td>
                     <td className="p-3.5 font-bold text-emerald-600">{item.availableQuantity}</td>
                     <td className="p-3.5 text-slate-500">{item.reorderLevel}</td>

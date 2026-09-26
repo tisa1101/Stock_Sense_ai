@@ -25,6 +25,7 @@ namespace StockSense.Application.Interfaces
         DbSet<StockAdjustment> StockAdjustments { get; }
         DbSet<StockAdjustmentItem> StockAdjustmentItems { get; }
         DbSet<StockLedger> StockLedgers { get; }
+        DbSet<Notification> Notifications { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
@@ -129,5 +130,58 @@ namespace StockSense.Application.Interfaces
         Task<DemandForecastDto> GetForecastAsync(int productId, int horizonDays = 30);
         Task<AiAnomalyResultDto> GetAnomaliesAsync(int days = 30);
         Task<CopilotResponseDto> ChatAsync(CopilotRequestDto request);
+    }
+
+    public interface INotificationService
+    {
+        Task CreateAsync(int userId, string title, string message, NotificationType type, NotificationPriority priority, string? relatedEntityType = null, int? relatedEntityId = null);
+        Task CreateForUsersAsync(IEnumerable<int> userIds, string title, string message, NotificationType type, NotificationPriority priority, string? relatedEntityType = null, int? relatedEntityId = null);
+        Task<NotificationListDto> GetUserNotificationsAsync(int userId, int page = 1, int pageSize = 20);
+        Task<int> GetUnreadCountAsync(int userId);
+        Task MarkAsReadAsync(int notificationId, int userId);
+        Task MarkAllAsReadAsync(int userId);
+    }
+
+    public interface IEnhancedSupplierService
+    {
+        Task<List<SupplierDto>> GetAllAsync(string? search = null);
+        Task<SupplierDetailDto> GetByIdAsync(int id);
+        Task<SupplierDto> CreateAsync(CreateSupplierDto dto);
+        Task<SupplierDto> UpdateAsync(int id, UpdateSupplierDto dto);
+        Task DeleteAsync(int id);
+        Task<List<ReceiptDto>> GetSupplierReceiptsAsync(int supplierId);
+        Task<SupplierStatsDto> GetStatsAsync();
+    }
+
+    public interface IAnalyticsService
+    {
+        Task<List<CategoryBreakdownDto>> GetCategoryBreakdownAsync();
+        Task<List<WarehouseComparisonDto>> GetWarehouseComparisonAsync();
+        Task<List<MovementTrendDto>> GetMovementTrendsAsync(int days = 30);
+        Task<List<TopProductMovementDto>> GetTopProductsAsync(int limit = 10);
+        Task<List<StockOverTimeDto>> GetStockOverTimeAsync(int days = 30);
+        Task<List<OperationSummaryDto>> GetOperationSummaryAsync(int days = 30);
+    }
+
+    public interface IReportService
+    {
+        Task<byte[]> GenerateInventoryReportAsync(ReportFilterDto filter, string format);
+        Task<byte[]> GenerateLedgerReportAsync(ReportFilterDto filter, string format);
+        Task<byte[]> GenerateReceiptsReportAsync(ReportFilterDto filter, string format);
+        Task<byte[]> GenerateDeliveriesReportAsync(ReportFilterDto filter, string format);
+        Task<byte[]> GenerateLowStockReportAsync(string format);
+        Task<byte[]> GenerateSummaryReportAsync(ReportFilterDto filter, string format);
+    }
+
+    public interface IUserManagementService
+    {
+        Task<List<UserListDto>> GetAllUsersAsync();
+        Task<UserListDto> GetUserByIdAsync(int id);
+        Task<UserListDto> ChangeRoleAsync(int id, UserRole role, int currentUserId);
+        Task<UserListDto> ToggleStatusAsync(int id, bool isActive, int currentUserId);
+        Task DeleteUserAsync(int id, int currentUserId);
+        Task<UserDto> GetProfileAsync(int userId);
+        Task<UserDto> UpdateProfileAsync(int userId, UpdateProfileDto dto);
+        Task ChangePasswordAsync(int userId, ChangePasswordDto dto);
     }
 }

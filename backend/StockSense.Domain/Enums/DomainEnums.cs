@@ -24,4 +24,23 @@ namespace StockSense.Domain.Enums
         Done = 4,
         Canceled = 5
     }
+
+    public enum NotificationType
+    {
+        LowStock = 1,
+        OutOfStock = 2,
+        ReceiptValidated = 3,
+        DeliveryValidated = 4,
+        TransferCompleted = 5,
+        AdjustmentDone = 6,
+        SystemAlert = 7
+    }
+
+    public enum NotificationPriority
+    {
+        Low = 1,
+        Medium = 2,
+        High = 3,
+        Critical = 4
+    }
 }

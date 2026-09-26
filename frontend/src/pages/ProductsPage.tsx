@@ -66,7 +66,7 @@ export const ProductsPage: React.FC = () => {
       {/* Header & Add Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">Products Catalog</h1>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Products Catalog</h1>
           <p className="text-xs text-slate-500">Manage SKUs, categories, reorder levels, and stock status</p>
         </div>
         <button
@@ -79,7 +79,7 @@ export const ProductsPage: React.FC = () => {
       </div>
 
       {/* Filter Toolbar */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-wrap items-center gap-3">
+      <div className="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-wrap items-center gap-3">
         {/* Search */}
         <div className="relative flex-1 min-w-[200px]">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
@@ -88,7 +88,7 @@ export const ProductsPage: React.FC = () => {
             placeholder="Search by product name or SKU..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+            className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:bg-slate-800"
           />
         </div>
 
@@ -131,7 +131,7 @@ export const ProductsPage: React.FC = () => {
           onAction={() => navigate('/products/new')}
         />
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
@@ -149,7 +149,7 @@ export const ProductsPage: React.FC = () => {
               <tbody className="divide-y divide-slate-100">
                 {filteredProducts.map((p) => (
                   <tr key={p.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="p-3.5 font-bold text-slate-900 flex items-center gap-2">
+                    <td className="p-3.5 font-bold text-slate-900 dark:text-white flex items-center gap-2">
                       <div className="w-7 h-7 rounded bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
                         <Package className="w-3.5 h-3.5" />
                       </div>
@@ -159,7 +159,7 @@ export const ProductsPage: React.FC = () => {
                     </td>
                     <td className="p-3.5 font-mono text-slate-600 font-semibold">{p.sku}</td>
                     <td className="p-3.5 text-slate-600">{p.categoryName}</td>
-                    <td className="p-3.5 font-extrabold text-slate-900">{p.totalStock}</td>
+                    <td className="p-3.5 font-extrabold text-slate-900 dark:text-white">{p.totalStock}</td>
                     <td className="p-3.5 text-slate-500">{p.unitOfMeasure}</td>
                     <td className="p-3.5 text-slate-500">{p.reorderLevel}</td>
                     <td className="p-3.5">

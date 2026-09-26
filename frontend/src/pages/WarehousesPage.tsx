@@ -59,7 +59,7 @@ export const WarehousesPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
             <Building2 className="w-5 h-5 text-indigo-600" />
             <span>Warehouse Management</span>
           </h1>
@@ -76,7 +76,7 @@ export const WarehousesPage: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {warehouses.map((w) => (
-          <div key={w.id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs space-y-3">
+          <div key={w.id} className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 shadow-2xs space-y-3">
             <div className="flex items-center justify-between">
               <div className="w-9 h-9 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
                 {w.code.substring(0, 2)}
@@ -87,7 +87,7 @@ export const WarehousesPage: React.FC = () => {
             </div>
 
             <div>
-              <h3 className="text-base font-bold text-slate-900">{w.name}</h3>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">{w.name}</h3>
               <p className="text-xs font-mono font-semibold text-indigo-600 mt-0.5">Code: {w.code}</p>
             </div>
 
@@ -101,8 +101,8 @@ export const WarehousesPage: React.FC = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl space-y-4">
-            <h3 className="text-lg font-bold text-slate-900">Add New Warehouse</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl space-y-4">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Add New Warehouse</h3>
 
             {error && (
               <div className="p-3 bg-rose-50 border border-rose-200 rounded-lg flex items-center gap-2 text-xs font-semibold text-rose-700">

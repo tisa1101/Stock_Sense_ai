@@ -148,6 +148,28 @@ namespace StockSense.Infrastructure.Persistence
                 context.StockLedgers.AddRange(ledgers);
                 await context.SaveChangesAsync();
             }
+
+            // 7. Seed Commit 3 Data
+            var existingSuppliers = await context.Suppliers.ToListAsync();
+            foreach (var sup in existingSuppliers)
+            {
+                if (sup.Rating == 0) sup.Rating = 3;
+                sup.IsActive = true;
+            }
+            await context.SaveChangesAsync();
+
+            if (!await context.Notifications.AnyAsync())
+            {
+                var adminUser = await context.Users.FirstOrDefaultAsync(u => u.Role == UserRole.Admin);
+                if (adminUser != null)
+                {
+                    context.Notifications.AddRange(
+                        new Notification { UserId = adminUser.Id, Title = "System Update", Message = "Welcome to StockSense Enhanced Edition", Type = NotificationType.SystemAlert, Priority = NotificationPriority.Low, CreatedAt = DateTime.UtcNow },
+                        new Notification { UserId = adminUser.Id, Title = "Low Stock Alert", Message = "Item PRD-ELE-003 is below reorder level.", Type = NotificationType.LowStock, Priority = NotificationPriority.High, CreatedAt = DateTime.UtcNow.AddMinutes(-5) }
+                    );
+                    await context.SaveChangesAsync();
+                }
+            }
         }
     }
 }

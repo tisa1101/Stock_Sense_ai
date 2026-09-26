@@ -279,3 +279,135 @@ export interface CopilotResponse {
   reply: string;
   timestamp: string;
 }
+
+// ===== COMMIT 3 TYPES =====
+export type Theme = 'light' | 'dark' | 'system';
+
+export interface NotificationItem {
+  id: number;
+  userId: number;
+  title: string;
+  message: string;
+  type: number; // NotificationType enum
+  priority: number; // NotificationPriority enum
+  isRead: boolean;
+  relatedEntityType?: string;
+  relatedEntityId?: number;
+  createdAt: string;
+}
+
+export interface NotificationList {
+  items: NotificationItem[];
+  totalCount: number;
+  unreadCount: number;
+}
+
+export interface SupplierDetail {
+  id: number;
+  name: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
+  address: string;
+  rating: number;
+  isActive: boolean;
+  notes?: string;
+  updatedAt: string;
+  totalReceipts: number;
+  totalQuantitySupplied: number;
+  recentReceipts: Receipt[];
+}
+
+export interface UpdateSupplierPayload {
+  name: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
+  address: string;
+  rating: number;
+  isActive: boolean;
+  notes?: string;
+}
+
+export interface TopSupplier {
+  supplierId: number;
+  supplierName: string;
+  totalReceipts: number;
+  totalQuantitySupplied: number;
+  rating: number;
+  lastReceiptDate: string;
+}
+
+export interface SupplierStats {
+  totalSuppliers: number;
+  activeSuppliers: number;
+  totalReceiptsThisMonth: number;
+  topSuppliers: TopSupplier[];
+}
+
+export interface CategoryBreakdown {
+  categoryName: string;
+  productCount: number;
+  totalStock: number;
+  percentage: number;
+}
+
+export interface WarehouseComparison {
+  warehouseName: string;
+  warehouseCode: string;
+  totalProducts: number;
+  totalStock: number;
+  lowStockCount: number;
+  utilizationPercentage: number;
+}
+
+export interface MovementTrend {
+  date: string;
+  receipts: number;
+  deliveries: number;
+  transfersIn: number;
+  transfersOut: number;
+  adjustments: number;
+  netChange: number;
+}
+
+export interface TopProductMovement {
+  productId: number;
+  productName: string;
+  sku: string;
+  totalMovements: number;
+  totalQuantityMoved: number;
+  averageMovementSize: number;
+}
+
+export interface StockOverTime {
+  date: string;
+  totalStock: number;
+}
+
+export interface OperationSummary {
+  operationType: string;
+  draft: number;
+  waiting: number;
+  ready: number;
+  done: number;
+  canceled: number;
+  total: number;
+}
+
+export interface UserProfile {
+  id: number;
+  name: string;
+  email: string;
+  role: number;
+  createdAt: string;
+}
+
+export interface UserListItem {
+  id: number;
+  name: string;
+  email: string;
+  role: number;
+  isActive: boolean;
+  createdAt: string;
+}

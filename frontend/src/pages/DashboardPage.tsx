@@ -70,8 +70,8 @@ export const DashboardPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Quick Action Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
-        <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Quick Actions</span>
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Quick Actions</span>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => navigate('/products/new')}
@@ -169,11 +169,11 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* CHART: Stock Movement History */}
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs">
+      <div className="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-base font-bold text-slate-900">Stock Movement Telemetry</h3>
-            <p className="text-xs text-slate-500">7-Day historical activity breakdown by transaction type</p>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">Stock Movement Telemetry</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">7-Day historical activity breakdown by transaction type</p>
           </div>
         </div>
         <div className="h-72 w-full">
@@ -204,11 +204,11 @@ export const DashboardPage: React.FC = () => {
       {/* TWO COLUMN GRID: Low Stock Alert Table & Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Low Stock Alert Table */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-2xs flex flex-col">
-          <div className="p-4 border-b border-slate-200 flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs flex flex-col">
+          <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 text-amber-500" />
-              <h3 className="text-sm font-bold text-slate-900">Low & Out of Stock Products</h3>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Low & Out of Stock Products</h3>
             </div>
             <Link to="/inventory" className="text-xs text-indigo-600 font-semibold hover:underline flex items-center gap-0.5">
               <span>View All</span>
@@ -219,7 +219,7 @@ export const DashboardPage: React.FC = () => {
           <div className="flex-1 overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200 uppercase tracking-wider">
+                <tr className="bg-slate-50 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-700 uppercase tracking-wider">
                   <th className="p-3">Product</th>
                   <th className="p-3">SKU</th>
                   <th className="p-3">Total Stock</th>
@@ -231,10 +231,10 @@ export const DashboardPage: React.FC = () => {
                 {data?.lowStockProducts && data.lowStockProducts.length > 0 ? (
                   data.lowStockProducts.map((p) => (
                     <tr key={p.productId} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="p-3 font-semibold text-slate-900">{p.productName}</td>
-                      <td className="p-3 text-slate-500 font-mono">{p.sku}</td>
-                      <td className="p-3 font-bold text-slate-900">{p.totalStock}</td>
-                      <td className="p-3 text-slate-500">{p.reorderLevel}</td>
+                      <td className="p-3 font-semibold text-slate-900 dark:text-white">{p.productName}</td>
+                      <td className="p-3 text-slate-500 dark:text-slate-400 font-mono">{p.sku}</td>
+                      <td className="p-3 font-bold text-slate-900 dark:text-white">{p.totalStock}</td>
+                      <td className="p-3 text-slate-500 dark:text-slate-400">{p.reorderLevel}</td>
                       <td className="p-3">
                         <StatusBadge status={p.status} />
                       </td>
@@ -253,11 +253,11 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Recent Stock Activity */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-2xs flex flex-col">
-          <div className="p-4 border-b border-slate-200 flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs flex flex-col">
+          <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <History className="w-4 h-4 text-indigo-500" />
-              <h3 className="text-sm font-bold text-slate-900">Recent Stock Activity</h3>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Recent Stock Activity</h3>
             </div>
             <Link to="/ledger" className="text-xs text-indigo-600 font-semibold hover:underline flex items-center gap-0.5">
               <span>Full Audit Ledger</span>
@@ -268,7 +268,7 @@ export const DashboardPage: React.FC = () => {
           <div className="flex-1 overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200 uppercase tracking-wider">
+                <tr className="bg-slate-50 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-700 uppercase tracking-wider">
                   <th className="p-3">Date</th>
                   <th className="p-3">Product</th>
                   <th className="p-3">Type</th>
@@ -280,10 +280,10 @@ export const DashboardPage: React.FC = () => {
                 {data?.recentStockMovements && data.recentStockMovements.length > 0 ? (
                   data.recentStockMovements.map((m) => (
                     <tr key={m.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="p-3 text-slate-500 whitespace-nowrap">
+                      <td className="p-3 text-slate-500 dark:text-slate-400 whitespace-nowrap">
                         {new Date(m.createdAt).toLocaleDateString()} {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </td>
-                      <td className="p-3 font-semibold text-slate-900 truncate max-w-[140px]" title={m.productName}>
+                      <td className="p-3 font-semibold text-slate-900 dark:text-white truncate max-w-[140px]" title={m.productName}>
                         {m.productName}
                       </td>
                       <td className="p-3">
@@ -292,7 +292,7 @@ export const DashboardPage: React.FC = () => {
                       <td className={`p-3 font-bold ${m.quantityChange >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
                         {m.quantityChange > 0 ? `+${m.quantityChange}` : m.quantityChange}
                       </td>
-                      <td className="p-3 text-slate-500 font-mono truncate max-w-[120px]" title={m.referenceId}>
+                      <td className="p-3 text-slate-500 dark:text-slate-400 font-mono truncate max-w-[120px]" title={m.referenceId}>
                         {m.referenceId}
                       </td>
                     </tr>

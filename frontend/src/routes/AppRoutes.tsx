@@ -26,6 +26,13 @@ import { ForecastPage } from '../pages/ForecastPage';
 import { AnomaliesPage } from '../pages/AnomaliesPage';
 import { CopilotPage } from '../pages/CopilotPage';
 
+import { LandingPage } from '../pages/LandingPage';
+import { NotificationsPage } from '../pages/NotificationsPage';
+import { SuppliersPage } from '../pages/SuppliersPage';
+import { SupplierDetailPage } from '../pages/SupplierDetailPage';
+import { ReportsPage } from '../pages/ReportsPage';
+import { AnalyticsPage } from '../pages/AnalyticsPage';
+
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
   if (!isAuthenticated) {
@@ -37,6 +44,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 export const AppRoutes: React.FC = () => {
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
       {/* Public Auth Routes */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<LoginPage />} />
@@ -72,10 +80,17 @@ export const AppRoutes: React.FC = () => {
         <Route path="/forecast" element={<ForecastPage />} />
         <Route path="/anomalies" element={<AnomaliesPage />} />
         <Route path="/copilot" element={<CopilotPage />} />
+        
+        {/* Commit 3 Routes */}
+        <Route path="/suppliers" element={<SuppliersPage />} />
+        <Route path="/suppliers/:id" element={<SupplierDetailPage />} />
+        <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
       </Route>
 
       {/* Default Catch All */}
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
