@@ -46,6 +46,9 @@ namespace StockSense.Application.Interfaces
     {
         Task<AuthResponseDto> RegisterAsync(RegisterRequestDto dto);
         Task<AuthResponseDto> LoginAsync(LoginRequestDto dto);
+        Task<OtpResponseDto> RequestOtpAsync(ForgotPasswordRequestDto dto);
+        Task<bool> VerifyOtpAsync(VerifyOtpRequestDto dto);
+        Task<OtpResponseDto> ResetPasswordWithOtpAsync(ResetPasswordOtpRequestDto dto);
     }
 
     public interface ICategoryService

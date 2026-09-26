@@ -6,8 +6,10 @@ import { AuthLayout } from '../layouts/AuthLayout';
 
 import { LoginPage } from '../pages/LoginPage';
 import { RegisterPage } from '../pages/RegisterPage';
+import { ForgotPasswordPage } from '../pages/ForgotPasswordPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { ProductsPage } from '../pages/ProductsPage';
+import { ReorderingRulesPage } from '../pages/ReorderingRulesPage';
 import { ProductFormPage } from '../pages/ProductFormPage';
 import { ProductDetailPage } from '../pages/ProductDetailPage';
 import { InventoryPage } from '../pages/InventoryPage';
@@ -49,6 +51,7 @@ export const AppRoutes: React.FC = () => {
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       </Route>
 
       {/* Protected App Routes */}
@@ -63,6 +66,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/products/new" element={<ProductFormPage />} />
         <Route path="/products/:id" element={<ProductDetailPage />} />
+        <Route path="/reordering-rules" element={<ReorderingRulesPage />} />
         <Route path="/inventory" element={<InventoryPage />} />
         <Route path="/receipts" element={<ReceiptsPage />} />
         <Route path="/receipts/new" element={<CreateReceiptPage />} />

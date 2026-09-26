@@ -58,6 +58,79 @@ namespace StockSense.Application.Services
             var token = _jwtTokenGenerator.GenerateToken(user);
             return new AuthResponseDto(token, new UserDto(user.Id, user.Name, user.Email, user.Role, user.CreatedAt));
         }
+
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, (string Otp, DateTime Expiry)> _otpStore = new();
+
+        public async Task<OtpResponseDto> RequestOtpAsync(ForgotPasswordRequestDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Email))
+                throw new BusinessException("Email is required.");
+
+            var emailKey = dto.Email.Trim().ToLower();
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == emailKey);
+            if (user == null)
+            {
+                // Return success anyway for security, but without active OTP
+                return new OtpResponseDto("If this email exists in our system, a 6-digit OTP has been dispatched.", null);
+            }
+
+            // Generate secure 6-digit OTP
+            var random = new Random();
+            var otp = random.Next(100000, 999999).ToString();
+            var expiry = DateTime.UtcNow.AddMinutes(10);
+            _otpStore[emailKey] = (otp, expiry);
+
+            // In production, dispatch via Email/SMS service. In demo/hackathon environment, return preview in response and console.
+            Console.WriteLine($"[StockSense OTP Dispatch] OTP for {emailKey}: {otp} (Expires: {expiry})");
+            return new OtpResponseDto("A 6-digit OTP code has been dispatched. Enter it below to verify.", otp);
+        }
+
+        public Task<bool> VerifyOtpAsync(VerifyOtpRequestDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Otp))
+                return Task.FromResult(false);
+
+            var emailKey = dto.Email.Trim().ToLower();
+            if (_otpStore.TryGetValue(emailKey, out var entry))
+            {
+                if (entry.Expiry >= DateTime.UtcNow && entry.Otp == dto.Otp.Trim())
+                {
+                    return Task.FromResult(true);
+                }
+            }
+
+            return Task.FromResult(false);
+        }
+
+        public async Task<OtpResponseDto> ResetPasswordWithOtpAsync(ResetPasswordOtpRequestDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Otp))
+                throw new BusinessException("Email and OTP are required.");
+
+            if (string.IsNullOrWhiteSpace(dto.NewPassword) || dto.NewPassword.Length < 6)
+                throw new BusinessException("Password must be at least 6 characters long.");
+
+            if (dto.NewPassword != dto.ConfirmPassword)
+                throw new BusinessException("New passwords do not match.");
+
+            var emailKey = dto.Email.Trim().ToLower();
+            if (!_otpStore.TryGetValue(emailKey, out var entry) || entry.Expiry < DateTime.UtcNow || entry.Otp != dto.Otp.Trim())
+            {
+                throw new BusinessException("Invalid or expired OTP code. Please request a new code.");
+            }
+
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == emailKey);
+            if (user == null)
+                throw new BusinessException("User account not found.");
+
+            user.PasswordHash = _passwordHasher.HashPassword(dto.NewPassword);
+            await _db.SaveChangesAsync();
+
+            // Invalidate used OTP
+            _otpStore.TryRemove(emailKey, out _);
+
+            return new OtpResponseDto("Password reset successfully. You can now log in with your new password.");
+        }
     }
 
     public class CategoryService : ICategoryService

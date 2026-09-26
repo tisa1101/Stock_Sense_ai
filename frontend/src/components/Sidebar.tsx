@@ -71,6 +71,9 @@ export const Sidebar: React.FC = () => {
                 <NavLink to="/inventory" onClick={() => setMobileOpen(false)} className={({ isActive }) => `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-indigo-600 text-white' : 'hover:bg-slate-800 hover:text-white'}`}>
                   <Boxes className="w-4 h-4 text-slate-400" /> <span>Stock Overview</span>
                 </NavLink>
+                <NavLink to="/reordering-rules" onClick={() => setMobileOpen(false)} className={({ isActive }) => `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-indigo-600 text-white' : 'hover:bg-slate-800 hover:text-white'}`}>
+                  <SlidersHorizontal className="w-4 h-4 text-slate-400" /> <span>Reordering Rules</span>
+                </NavLink>
                 <NavLink to="/suppliers" onClick={() => setMobileOpen(false)} className={({ isActive }) => `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-indigo-600 text-white' : 'hover:bg-slate-800 hover:text-white'}`}>
                   <Truck className="w-4 h-4 text-slate-400" /> <span>Suppliers</span>
                 </NavLink>

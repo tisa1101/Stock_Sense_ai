@@ -30,6 +30,30 @@ namespace StockSense.API.Controllers
             var result = await _authService.LoginAsync(dto);
             return Ok(ApiResponse<AuthResponseDto>.Ok(result, "Login successful."));
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<ActionResult<ApiResponse<OtpResponseDto>>> ForgotPassword([FromBody] ForgotPasswordRequestDto dto)
+        {
+            var result = await _authService.RequestOtpAsync(dto);
+            return Ok(ApiResponse<OtpResponseDto>.Ok(result, result.Message));
+        }
+
+        [HttpPost("verify-otp")]
+        public async Task<ActionResult<ApiResponse<bool>>> VerifyOtp([FromBody] VerifyOtpRequestDto dto)
+        {
+            var isValid = await _authService.VerifyOtpAsync(dto);
+            if (!isValid)
+                return BadRequest(ApiResponse<bool>.Fail("Invalid or expired OTP."));
+
+            return Ok(ApiResponse<bool>.Ok(true, "OTP verified successfully."));
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<ActionResult<ApiResponse<OtpResponseDto>>> ResetPassword([FromBody] ResetPasswordOtpRequestDto dto)
+        {
+            var result = await _authService.ResetPasswordWithOtpAsync(dto);
+            return Ok(ApiResponse<OtpResponseDto>.Ok(result, result.Message));
+        }
     }
 
     [ApiController]

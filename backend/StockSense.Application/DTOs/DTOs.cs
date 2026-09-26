@@ -9,6 +9,10 @@ namespace StockSense.Application.DTOs
     public record LoginRequestDto(string Email, string Password);
     public record AuthResponseDto(string AccessToken, UserDto User);
     public record UserDto(int Id, string Name, string Email, UserRole Role, DateTime CreatedAt);
+    public record ForgotPasswordRequestDto(string Email);
+    public record VerifyOtpRequestDto(string Email, string Otp);
+    public record ResetPasswordOtpRequestDto(string Email, string Otp, string NewPassword, string ConfirmPassword);
+    public record OtpResponseDto(string Message, string? OtpPreview = null);
 
     // Category DTOs
     public record CategoryDto(int Id, string Name, string Description);
