@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="StockSense.API/StockSense.API.csproj" />
+  <Project Path="StockSense.Application/StockSense.Application.csproj" />
+  <Project Path="StockSense.Domain/StockSense.Domain.csproj" />
+  <Project Path="StockSense.Infrastructure/StockSense.Infrastructure.csproj" />
+</Solution>
