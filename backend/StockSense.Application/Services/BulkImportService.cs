@@ -60,9 +60,7 @@ namespace StockSense.Application.Services
                 var name = row.GetValueOrDefault("Name")?.Trim();
                 var sku = row.GetValueOrDefault("SKU")?.Trim();
                 var categoryName = row.GetValueOrDefault("Category")?.Trim();
-                var description = row.GetValueOrDefault("Description")?.Trim() ?? string.Empty;
-                var unitPriceStr = row.GetValueOrDefault("UnitPrice")?.Trim();
-                var costPriceStr = row.GetValueOrDefault("CostPrice")?.Trim();
+                var unitOfMeasure = row.GetValueOrDefault("UnitOfMeasure")?.Trim();
                 var reorderLevelStr = row.GetValueOrDefault("ReorderLevel")?.Trim();
 
                 if (string.IsNullOrWhiteSpace(name))
@@ -80,20 +78,6 @@ namespace StockSense.Application.Services
                 if (existingSkus.Contains(sku.ToUpper()))
                 {
                     errors.Add(new BulkImportRowErrorDto(rowNumber, sku, "SKU", $"Product with SKU '{sku}' already exists."));
-                    continue;
-                }
-
-                decimal unitPrice = 0;
-                if (!string.IsNullOrWhiteSpace(unitPriceStr) && !decimal.TryParse(unitPriceStr, out unitPrice))
-                {
-                    errors.Add(new BulkImportRowErrorDto(rowNumber, sku, "UnitPrice", "Invalid Unit Price number format."));
-                    continue;
-                }
-
-                decimal costPrice = 0;
-                if (!string.IsNullOrWhiteSpace(costPriceStr) && !decimal.TryParse(costPriceStr, out costPrice))
-                {
-                    errors.Add(new BulkImportRowErrorDto(rowNumber, sku, "CostPrice", "Invalid Cost Price number format."));
                     continue;
                 }
 
@@ -125,10 +109,8 @@ namespace StockSense.Application.Services
                 {
                     Name = name,
                     SKU = sku.ToUpper(),
-                    Description = description,
                     CategoryId = category.Id,
-                    UnitPrice = unitPrice > 0 ? unitPrice : 10.0m,
-                    CostPrice = costPrice > 0 ? costPrice : 5.0m,
+                    UnitOfMeasure = !string.IsNullOrWhiteSpace(unitOfMeasure) ? unitOfMeasure : "PCS",
                     ReorderLevel = reorderLevel > 0 ? reorderLevel : 10,
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow,
@@ -251,14 +233,14 @@ namespace StockSense.Application.Services
                 {
                     ProductId = product.Id,
                     WarehouseId = warehouse.Id,
-                    TransactionType = TransactionType.StockAdjustment,
-                    ReferenceId = 0,
+                    TransactionType = TransactionType.ADJUSTMENT,
+                    ReferenceId = $"OPENING-{product.Id}",
                     QuantityBefore = beforeQty,
                     QuantityChange = qtyChange,
                     QuantityAfter = quantity,
                     Description = $"[Opening Stock] {reason}",
                     CreatedAt = DateTime.UtcNow,
-                    CreatedBy = userId > 0 ? userId : 1
+                    CreatedBy = userId > 0 ? userId.ToString() : "Admin"
                 };
 
                 _context.StockLedgers.Add(ledger);
@@ -282,10 +264,10 @@ namespace StockSense.Application.Services
 
         public byte[] GetProductTemplateCsv()
         {
-            var csv = "Name,SKU,Category,Description,UnitPrice,CostPrice,ReorderLevel\n" +
-                      "\"Smart Industrial Sensor X1\",\"SKU-SENS-001\",\"Electronics\",\"High precision temperature sensor\",49.99,25.00,20\n" +
-                      "\"Heavy Duty Steel Pallet\",\"SKU-PALL-002\",\"Packaging\",\"1200x1000mm industrial pallet\",85.50,45.00,15\n" +
-                      "\"Alloy Ingot 5kg\",\"SKU-RAW-003\",\"Raw Materials\",\"High-grade aluminum alloy ingot\",120.00,75.00,30\n";
+            var csv = "Name,SKU,Category,UnitOfMeasure,ReorderLevel\n" +
+                      "\"Smart Industrial Sensor X1\",\"SKU-SENS-001\",\"Electronics\",\"PCS\",20\n" +
+                      "\"Heavy Duty Steel Pallet\",\"SKU-PALL-002\",\"Packaging\",\"PCS\",15\n" +
+                      "\"Alloy Ingot 5kg\",\"SKU-RAW-003\",\"Raw Materials\",\"KG\",30\n";
             return Encoding.UTF8.GetBytes(csv);
         }
 
