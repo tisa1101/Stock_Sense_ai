@@ -21,6 +21,8 @@ namespace StockSense.Application.Common
             };
         }
 
+        public static ApiResponse<T> SuccessResponse(T data, string message = "Success") => Ok(data, message);
+
         public static ApiResponse<T> Fail(string message, List<string>? errors = null)
         {
             return new ApiResponse<T>

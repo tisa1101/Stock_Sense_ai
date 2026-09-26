@@ -54,7 +54,7 @@ namespace StockSense.API.Controllers
                 );
             }
 
-            return Ok(ApiResponse<BulkImportResultDto>.SuccessResponse(result, $"Bulk import processed: {result.SuccessCount} succeeded, {result.FailedCount} failed."));
+            return Ok(ApiResponse<BulkImportResultDto>.Ok(result, $"Bulk import processed: {result.SuccessCount} succeeded, {result.FailedCount} failed."));
         }
 
         [HttpPost("opening-stock")]
@@ -87,7 +87,7 @@ namespace StockSense.API.Controllers
                 );
             }
 
-            return Ok(ApiResponse<BulkImportResultDto>.SuccessResponse(result, $"Opening stock import processed: {result.SuccessCount} positions updated, {result.FailedCount} errors."));
+            return Ok(ApiResponse<BulkImportResultDto>.Ok(result, $"Opening stock import processed: {result.SuccessCount} positions updated, {result.FailedCount} errors."));
         }
 
         [HttpGet("templates/products")]
