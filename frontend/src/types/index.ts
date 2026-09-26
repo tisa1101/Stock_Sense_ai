@@ -226,3 +226,56 @@ export interface DashboardSummary {
   recentStockMovements: StockLedger[];
   stockMovementHistory: StockMovementPoint[];
 }
+
+// ──── AI Intelligence ────
+export interface ForecastPoint {
+  date: string;
+  value: number;
+  forecastValue?: number;
+  lowerBound?: number;
+  upperBound?: number;
+}
+
+export interface ReorderSuggestion {
+  suggestedReorderDate: string;
+  suggestedReorderQuantity: number;
+  reason: string;
+}
+
+export interface DemandForecast {
+  productId: number;
+  productName: string;
+  sku: string;
+  history: ForecastPoint[];
+  forecast: ForecastPoint[];
+  reorderSuggestion?: ReorderSuggestion;
+}
+
+export interface AiAnomaly {
+  productId: number;
+  productName: string;
+  sku: string;
+  severity: 'High' | 'Medium' | 'Low';
+  type: string;
+  description: string;
+  ledgerId: number;
+  quantityChange: number;
+  zScore: number;
+  detectedAt: string;
+}
+
+export interface AiAnomalyResult {
+  anomalies: AiAnomaly[];
+  totalCount: number;
+  scannedAt: string;
+}
+
+export interface CopilotMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface CopilotResponse {
+  reply: string;
+  timestamp: string;
+}

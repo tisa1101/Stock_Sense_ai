@@ -25,3 +25,10 @@ yarn-error.log*
 Thumbs.db
 .idea/
 .vscode/
+
+# Python AI Service
+ai-service/.venv/
+ai-service/__pycache__/
+ai-service/**/__pycache__/
+ai-service/*.pyc
+ai-service/.env

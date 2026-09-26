@@ -38,6 +38,13 @@ builder.Services.AddScoped<IStockAdjustmentService, StockAdjustmentService>();
 builder.Services.AddScoped<IStockLedgerService, StockLedgerService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 
+// AI Service (HTTP proxy to Python AI microservice)
+builder.Services.AddHttpClient("AiService", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["AiService:BaseUrl"] ?? "http://localhost:8000");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+builder.Services.AddScoped<IAiService, AiService>();
 // 3. Configure JWT Authentication
 var secretKey = builder.Configuration["Jwt:Key"] ?? "StockSense_Super_Secret_JWT_Key_2026_Hackathon_Production_Grade_Secret!";
 var issuer = builder.Configuration["Jwt:Issuer"] ?? "StockSenseAPI";

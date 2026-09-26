@@ -15,7 +15,10 @@ import {
   LogOut,
   ChevronDown,
   ChevronRight,
-  Layers
+  Layers,
+  TrendingUp,
+  ShieldAlert,
+  Bot
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { UserRole } from '../types';
@@ -167,6 +170,47 @@ export const Sidebar: React.FC = () => {
           >
             <History className="w-4 h-4 text-amber-400" />
             <span>Stock Ledger</span>
+          </NavLink>
+        </div>
+
+        {/* AI Intelligence */}
+        <div className="pt-4">
+          <div className="px-3 py-2 text-xs font-semibold text-cyan-400 uppercase tracking-wider mb-1 flex items-center gap-2">
+            <Bot className="w-3.5 h-3.5" />
+            AI Intelligence
+          </div>
+          <NavLink
+            to="/forecast"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                isActive ? 'bg-cyan-600 text-white shadow-xs' : 'hover:bg-slate-800 hover:text-white'
+              }`
+            }
+          >
+            <TrendingUp className="w-4 h-4 text-cyan-400" />
+            <span>Demand Forecast</span>
+          </NavLink>
+          <NavLink
+            to="/anomalies"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 mt-1 rounded-lg text-sm font-medium transition-colors ${
+                isActive ? 'bg-cyan-600 text-white shadow-xs' : 'hover:bg-slate-800 hover:text-white'
+              }`
+            }
+          >
+            <ShieldAlert className="w-4 h-4 text-cyan-400" />
+            <span>Anomaly Detection</span>
+          </NavLink>
+          <NavLink
+            to="/copilot"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 mt-1 rounded-lg text-sm font-medium transition-colors ${
+                isActive ? 'bg-cyan-600 text-white shadow-xs' : 'hover:bg-slate-800 hover:text-white'
+              }`
+            }
+          >
+            <Bot className="w-4 h-4 text-cyan-400" />
+            <span>AI Copilot</span>
           </NavLink>
         </div>
 

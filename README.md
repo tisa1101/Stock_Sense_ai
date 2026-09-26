@@ -3,7 +3,8 @@
 
 StockSense replaces manual registers, fragile Excel sheets, and fragmented stock tracking with a modern, centralized, real-time web application. 
 
-This repository represents **Commit 1: Core Inventory Foundation**, establishing a clean, production-ready full-stack architecture with strict stock-ledger audit rules to support future AI forecasting, demand prediction, and anomaly detection.
+- **Commit 1**: Core Inventory Foundation — production-ready full-stack architecture with strict stock-ledger audit rules.
+- **Commit 2**: AI Intelligence Layer — demand forecasting, anomaly detection, and Google Gemini-powered AI Copilot.
 
 ---
 
@@ -42,16 +43,16 @@ StockSense enforces strict enterprise stock accounting:
 ## 3. Repository Directory Structure
 
 ```
-stack-sense/
+stock-sense/
  ├── frontend/
  │   ├── src/
- │   │   ├── components/      # Sidebar, Navbar, StatusBadge, KpiCard, CommonState
+ │   │   ├── components/      # Sidebar, Navbar, StatusBadge, KpiCard, FloatingCopilot
  │   │   ├── context/         # AuthContext & useAuth hook
  │   │   ├── layouts/         # MainLayout, AuthLayout
- │   │   ├── pages/           # Dashboard, Products, Inventory, Receipts, Deliveries, Transfers, Adjustments, Ledger, Warehouses, Settings
+ │   │   ├── pages/           # Dashboard, Products, Inventory, + ForecastPage, AnomaliesPage, CopilotPage
  │   │   ├── routes/          # AppRoutes & ProtectedRoute
  │   │   ├── services/        # Axios API client
- │   │   ├── types/           # TypeScript interfaces & enums
+ │   │   ├── types/           # TypeScript interfaces & enums (+ AI types)
  │   │   ├── App.tsx
  │   │   └── main.tsx
  │   ├── package.json
@@ -60,9 +61,16 @@ stack-sense/
  ├── backend/
  │   ├── StockSense.slnx
  │   ├── StockSense.Domain/         # Entities, Enums
- │   ├── StockSense.Application/    # DTOs, Services, Interfaces, Exception middleware
+ │   ├── StockSense.Application/    # DTOs, Services (+AiService), Interfaces (+IAiService)
  │   ├── StockSense.Infrastructure/ # DbContext, Migrations, Seeders, Security
- │   └── StockSense.API/            # Controllers, Program.cs, Swagger
+ │   └── StockSense.API/            # Controllers (+AiController), Program.cs, Swagger
+ │
+ ├── ai-service/                    # Python FastAPI AI Microservice (Commit 2)
+ │   ├── main.py                    # FastAPI entry point
+ │   ├── routers/                   # forecast, anomalies, copilot endpoints
+ │   ├── services/                  # db, forecaster, detector, copilot_service
+ │   ├── requirements.txt
+ │   └── start.ps1
  │
  ├── .env.example
  ├── .gitignore
@@ -161,9 +169,114 @@ npm run dev
 
 ---
 
-## 9. Roadmap for Commit 2 (Upcoming AI/ML Modules)
+## 9. AI Intelligence Layer (Commit 2)
 
-The database schema and `StockLedger` audit history generated in Commit 1 serve as the data backbone for:
-- 🤖 **Demand Forecasting**: Time-series models predicting future stock consumption based on historical ledger velocity.
-- ⚠️ **Stockout Prediction & Anomaly Detection**: Unsupervised detection of unexpected stock shrinkage or demand spikes.
-- 💡 **AI Copilot & Natural Language Queries**: Chatbot interface analyzing inventory levels using real-time API tools.
+Commit 2 adds three AI/ML capabilities on top of the Commit 1 foundation — without modifying any existing core logic.
+
+### Architecture
+
+```
+┌──────────────────────────────────┐
+│         React Frontend           │
+│  + ForecastPage + AnomaliesPage  │
+│  + CopilotPage + FloatingCopilot │
+└──────────┬───────────────────────┘
+           │ HTTP (axios)
+┌──────────▼───────────────────────┐
+│    .NET 8 API (Gateway/Proxy)    │
+│  + AiController → IAiService     │
+└──────────┬───────────────────────┘
+           │ HTTP (HttpClient)
+┌──────────▼───────────────────────┐
+│   Python FastAPI (ai-service/)   │
+│  • /forecast  (SES Forecasting)  │
+│  • /anomalies (Z-score Detector) │
+│  • /copilot   (Gemini Chat)      │
+└──────────────────────────────────┘
+```
+
+### Features
+
+| Feature | Description | Algorithm |
+| :--- | :--- | :--- |
+| **📈 Demand Forecasting** | Predicts daily demand per product for N days ahead | Simple Exponential Smoothing (statsmodels) |
+| **🚨 Anomaly Detection** | Auto-flags unusual stock movements, spikes, drops | Z-score statistical method (σ > 2.5) |
+| **🤖 AI Copilot** | Natural language assistant for inventory Q&A | Google Gemini (`gemini-2.0-flash`) |
+
+### New Directory Structure
+
+```
+ai-service/
+├── main.py                 # FastAPI entry point
+├── requirements.txt        # Python dependencies
+├── start.ps1               # PowerShell one-click startup
+├── .env.example            # Environment variables template
+├── routers/
+│   ├── forecast.py         # POST /forecast/{product_id}
+│   ├── anomalies.py        # GET  /anomalies?days=30
+│   └── copilot.py          # POST /copilot/chat
+└── services/
+    ├── db.py               # SQL Server database helpers (pyodbc)
+    ├── forecaster.py       # SES demand forecasting engine
+    ├── detector.py         # Z-score anomaly detection engine
+    └── copilot_service.py  # Gemini SDK integration
+```
+
+### How to Run the AI Service
+
+```bash
+# Navigate to ai-service directory
+cd ai-service
+
+# Option 1: Use the startup script (recommended)
+.\start.ps1
+
+# Option 2: Manual setup
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+- **AI Service URL**: `http://localhost:8000`
+- **Health Check**: `http://localhost:8000/health`
+- **Swagger Docs**: `http://localhost:8000/docs`
+
+> **Note**: Set `GEMINI_API_KEY` in `ai-service/.env` to enable the AI Copilot. The Forecasting and Anomaly Detection features work without an API key.
+
+### AI API Endpoints
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/ai/forecast/{productId}?horizonDays=30` | Get demand forecast for a product |
+| `GET` | `/api/ai/anomalies?days=30` | Detect anomalous stock movements |
+| `POST` | `/api/ai/copilot/chat` | Chat with the AI Copilot |
+
+---
+
+## 10. Running the Full Stack
+
+Start all three services in separate terminals:
+
+```bash
+# Terminal 1 — Backend API
+cd backend/StockSense.API
+dotnet run
+
+# Terminal 2 — AI Service
+cd ai-service
+.\start.ps1
+
+# Terminal 3 — Frontend
+cd frontend
+npm install   # first time only
+npm run dev
+```
+
+| Service | URL |
+| :--- | :--- |
+| Frontend | `http://localhost:5173` |
+| Backend API | `http://localhost:5000/api` |
+| AI Service | `http://localhost:8000` |
+| Swagger (API) | `http://localhost:5000/swagger` |
+| Swagger (AI) | `http://localhost:8000/docs` |

@@ -124,4 +124,10 @@ namespace StockSense.Application.Interfaces
     {
         Task<DashboardSummaryDto> GetSummaryAsync();
     }
+    public interface IAiService
+    {
+        Task<DemandForecastDto> GetForecastAsync(int productId, int horizonDays = 30);
+        Task<AiAnomalyResultDto> GetAnomaliesAsync(int days = 30);
+        Task<CopilotResponseDto> ChatAsync(CopilotRequestDto request);
+    }
 }

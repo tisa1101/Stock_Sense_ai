@@ -164,4 +164,33 @@ namespace StockSense.Application.DTOs
         List<StockLedgerDto> RecentStockMovements,
         List<StockMovementPointDto> StockMovementHistory
     );
+    // ──── AI Intelligence DTOs ────
+    public record ForecastPointDto(string Date, double Value, double? ForecastValue, double? LowerBound, double? UpperBound);
+    public record ReorderSuggestionDto(string SuggestedReorderDate, int SuggestedReorderQuantity, string Reason);
+    public record DemandForecastDto(
+        int ProductId,
+        string ProductName,
+        string SKU,
+        List<ForecastPointDto> History,
+        List<ForecastPointDto> Forecast,
+        ReorderSuggestionDto? ReorderSuggestion
+    );
+
+    public record AiAnomalyDto(
+        int ProductId,
+        string ProductName,
+        string SKU,
+        string Severity,
+        string Type,
+        string Description,
+        int LedgerId,
+        int QuantityChange,
+        double ZScore,
+        DateTime DetectedAt
+    );
+    public record AiAnomalyResultDto(List<AiAnomalyDto> Anomalies, int TotalCount, DateTime ScannedAt);
+
+    public record CopilotMessageDto(string Role, string Content);
+    public record CopilotRequestDto(string Message, List<CopilotMessageDto>? History);
+    public record CopilotResponseDto(string Reply, DateTime Timestamp);
 }

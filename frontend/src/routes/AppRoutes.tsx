@@ -22,6 +22,9 @@ import { CreateAdjustmentPage } from '../pages/CreateAdjustmentPage';
 import { LedgerPage } from '../pages/LedgerPage';
 import { WarehousesPage } from '../pages/WarehousesPage';
 import { SettingsPage } from '../pages/SettingsPage';
+import { ForecastPage } from '../pages/ForecastPage';
+import { AnomaliesPage } from '../pages/AnomaliesPage';
+import { CopilotPage } from '../pages/CopilotPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -64,6 +67,11 @@ export const AppRoutes: React.FC = () => {
         <Route path="/ledger" element={<LedgerPage />} />
         <Route path="/warehouses" element={<WarehousesPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        
+        {/* AI Routes */}
+        <Route path="/forecast" element={<ForecastPage />} />
+        <Route path="/anomalies" element={<AnomaliesPage />} />
+        <Route path="/copilot" element={<CopilotPage />} />
       </Route>
 
       {/* Default Catch All */}
